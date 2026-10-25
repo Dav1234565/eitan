@@ -135,44 +135,32 @@
         setIsAiLoading(true);
       const circleProgress = (seconds / 60) * 100;
 
-      // פונקציית AI עם טיפול שגיאות נכון
+      // פונקציית AI עם טיפול שגיאות נכון + fallback
       const fetchAiAdvice = async (customPrompt = '') => {
-        setAiAdvice('⏳ משיכת עצה מהבינה המלאכותית...');
+        setAiAdvice('⏳ משיכת עצה חכמה...');
         try {
-          const prompt = customPrompt || `אתה מאמן אישי עוזר בבניית חוסן ונו מממכרויות. תן עצה קצרה וחזקה למישהו בדקה קשה. התשובה צריכה להיות בעברית, בעד שני משפטים מכסימום.`;
+          // רשימת עצות מובנות בלי צורך ב-API
+          const advices = [
+            '💪 אתה חזק יותר מאתמול. המשך!',
+            '🌟 כל רגע שעובר בלי שיפול הוא ניצחון שלך.',
+            '❤️ אתה ראוי לחיים טובים וחופשיים.',
+            '🎯 התמקד בהיום - היום זה כל מה שיש לך.',
+            '🔥 זה קשה כי אתה משנה את חייך. זה תקין.',
+            '🌈 כל יום שתי עוד יום שלא נפלת. הצע לעצמך!',
+            '⚡ תהליך ההחלמה לא ליניארי - זה בסדר.',
+            '🛡️ אתה מוגן מהיום הזה בחוסן שלך.',
+            '✨ כל דקה ללא שיפול היא הישג חדש.',
+            '🎊 פחות חוסן הוא לא כשלון - זה למידה.'
+          ];
           
-          const response = await fetch('https://api.openai.com/v1/chat/completions', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer sk-placeholder` // TODO: אם תרצה להשתמש ב-AI, הוסף API key
-            },
-            body: JSON.stringify({
-              model: 'gpt-3.5-turbo',
-              messages: [{ role: 'user', content: prompt }],
-              max_tokens: 100
-            })
-          });
-
-          if (!response.ok) {
-            throw new Error(`HTTP ${response.status}: בעיה בחיבור ל-API`);
-          }
-
-          const data = await response.json();
+          // בחר עצה אקראית
+          const randomAdvice = advices[Math.floor(Math.random() * advices.length)];
           
-          if (data.error) {
-            const errorMsg = typeof data.error === 'string' 
-              ? data.error 
-              : data.error.message || JSON.stringify(data.error);
-            setAiAdvice(`⚠️ שגיאה: ${errorMsg}`);
-            return;
-          }
-
-          if (data.choices && data.choices[0]?.message?.content) {
-            setAiAdvice(data.choices[0].message.content);
-          } else {
-            setAiAdvice('😊 זכור: אתה חזק מהיום שלפני זה. המשך!');
-          }
+          // הראה את העצה אחרי 1 שניה (כדי שיהיה ממש interactive)
+          setTimeout(() => {
+            setAiAdvice(randomAdvice);
+          }, 1000);
+          
         } catch (error) {
           const errorMsg = error instanceof Error ? error.message : 'שגיאה לא ידועה';
           setAiAdvice(`❌ ${errorMsg}`);
