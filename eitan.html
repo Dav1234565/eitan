@@ -3,20 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>היתן - חוסן וניהול הרגלים</title>
+  <title>איתן - חוסן וניהול הרגלים</title>
   
-  <!-- PWA Manifest -->
-  <link rel="manifest" href="data:application/json,{%22name%22:%22%D7%94%D7%99%D7%AA%D7%9F%20-%20%D7%97%D7%95%D7%A1%D7%9F%20%D7%95%D7%A0%D7%99%D7%94%D7%95%D7%9C%20%D7%94%D7%A8%D7%92%D7%9C%D7%99%D7%9D%22,%22short_name%22:%22%D7%94%D7%99%D7%AA%D7%9F%22,%22icons%22:[{%22src%22:%22data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%27192%27%20height=%27192%27%20viewBox=%270%200%20192%20192%27%3E%3Crect%20fill=%27%2310b981%27%20width=%27192%27%20height=%27192%27/%3E%3Ctext%20x=%2796%27%20y=%27130%27%20font-size=%27100%27%20font-weight=%27900%27%20fill=%27white%27%20text-anchor=%27middle%27%3E%D7%94%3C/text%3E%3C/svg%3E%22,%22sizes%22:%22192x192%22,%22type%22:%22image/svg+xml%22,%22purpose%22:%22any%22}],%22start_url%22:%22./eitan.html%22,%22display%22:%22standalone%22,%22background_color%22:%22%230c0a09%22,%22theme_color%22:%2310b981%22,%22orientation%22:%22portrait%22}">
-  
-  <!-- Apple Touch Icon -->
-  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%27180%27%20height=%27180%27%20viewBox=%270%200%20180%20180%27%3E%3Crect%20fill=%27%2310b981%27%20width=%27180%27%20height=%27180%27/%3E%3Ctext%20x=%2790%27%20y=%27130%27%20font-size=%2790%27%20font-weight=%27900%27%20fill=%27white%27%20text-anchor=%27middle%27%3E%D7%94%3C/text%3E%3C/svg%3E">
-  
-  <!-- Mobile Web App Meta Tags -->
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="היתן">
-  <meta name="theme-color" content="#10b981">
-  
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2310b981'><path d='M12 2L3 7v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-5.45 9-12V7l-9-5z'/></svg>">
+
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   
@@ -26,11 +17,8 @@
   
   <!-- Babel Compiler for JSX -->
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-
-  <!-- Lucide Icons -->
-  <script src="https://unpkg.com/lucide@latest"></script>
 </head>
-<body class="bg-zinc-950 text-zinc-100 font-sans antialiased">
+<body class="bg-zinc-950 text-zinc-100 font-sans antialiased selection:bg-emerald-500/30">
 
   <div id="root"></div>
 
@@ -46,45 +34,30 @@
       "אחר (פירוט חופשי)"
     ];
 
-    // פונקציות עזר לשמירה מתקדמת (localStorage + Cookies)
-    const saveToStorage = (key, value) => {
-      const stringValue = JSON.stringify(value);
-      localStorage.setItem(key, stringValue);
-      // שמור גם ב-Cookie ל-1 שנה כגיבוי
-      try {
-        document.cookie = `${key}=${encodeURIComponent(stringValue)}; max-age=${365*24*60*60}; path=/; SameSite=Lax`;
-      } catch (e) {
-        console.error('Cookie save failed:', e);
-      }
-    };
-
-    const loadFromStorage = (key, defaultValue) => {
-      try {
-        // נסה לטעון מ-localStorage קודם
-        const local = localStorage.getItem(key);
-        if (local) {
-          return JSON.parse(local);
-        }
-        
-        // אם אין, נסה לשחזר מ-Cookie
-        const cookieValue = document.cookie.split('; ').find(row => row.startsWith(key + '='));
-        if (cookieValue) {
-          const value = decodeURIComponent(cookieValue.split('=')[1]);
-          return JSON.parse(value);
-        }
-      } catch (e) {
-        console.error('Storage load error:', e);
-      }
-      return defaultValue;
-    };
+    function EitanLogo({ size = "md" }) {
+      const dimensions = size === "sm" ? "w-8 h-8 text-base" : size === "lg" ? "w-16 h-16 text-3xl" : "w-10 h-10 text-xl";
+      
+      return (
+        <div className="flex items-center gap-3">
+          <div className={`${dimensions} rounded-2xl bg-gradient-to-br from-emerald-400 to-emerald-600 text-zinc-950 font-black flex items-center justify-center shadow-lg shadow-emerald-500/20 border border-emerald-400/30 tracking-tighter`}>
+            א
+          </div>
+          <div className="flex flex-col text-right">
+            <span className="font-black text-lg tracking-tight text-white leading-none">איתן</span>
+            <span className="text-[10px] text-emerald-400 font-medium tracking-wider uppercase">חוסן ואיזון</span>
+          </div>
+        </div>
+      );
+    }
 
     function EitanApp() {
       const [isRegistered, setIsRegistered] = useState(() => {
-        return loadFromStorage('eitan_registered', 'false') === 'true';
+        return localStorage.getItem('eitan_registered') === 'true';
       });
 
       const [profile, setProfile] = useState(() => {
-        return loadFromStorage('eitan_profile', {
+        const saved = localStorage.getItem('eitan_profile');
+        return saved ? JSON.parse(saved) : {
           name: '',
           age: '',
           gender: 'זכר',
@@ -92,24 +65,39 @@
           symptoms: [],
           promise: '',
           signatureDataUrl: ''
-        });
+        };
       });
 
       const [onboardingStep, setOnboardingStep] = useState(1);
       const [tempPassword, setTempPassword] = useState('');
 
-      // משטח חתימה
+      const [apiKey, setApiKey] = useState(() => {
+        return localStorage.getItem('eitan_gemini_key') || '';
+      });
+      const [showApiKeyModal, setShowApiKeyModal] = useState(false);
+      const [tempApiKeyInput, setTempApiKeyInput] = useState('');
+
+      const [aiAdvice, setAiAdvice] = useState('');
+      const [isAiLoading, setIsAiLoading] = useState(false);
+
       const canvasRef = useRef(null);
       const [isDrawing, setIsDrawing] = useState(false);
       const [hasSigned, setHasSigned] = useState(false);
 
       const [startTime, setStartTime] = useState(() => {
-        const saved = loadFromStorage('eitan_streak_start', null);
-        return saved ? parseInt(saved, 10) : Date.now();
+        const saved = localStorage.getItem('eitan_streak_start');
+        if (saved) {
+          const parsed = parseInt(saved, 10);
+          if (!isNaN(parsed)) return parsed;
+        }
+        const now = Date.now();
+        localStorage.setItem('eitan_streak_start', now.toString());
+        return now;
       });
 
       const [logs, setLogs] = useState(() => {
-        return loadFromStorage('eitan_logs', []);
+        const saved = localStorage.getItem('eitan_logs');
+        return saved ? JSON.parse(saved) : [];
       });
 
       const [elapsedSeconds, setElapsedSeconds] = useState(0);
@@ -119,11 +107,13 @@
 
       useEffect(() => {
         if (!isRegistered) return;
+        
         const updateTimer = () => {
           const now = Date.now();
           const diff = Math.max(0, Math.floor((now - startTime) / 1000));
           setElapsedSeconds(diff);
         };
+
         updateTimer();
         const interval = setInterval(updateTimer, 1000);
         return () => clearInterval(interval);
@@ -135,7 +125,91 @@
       const seconds = elapsedSeconds % 60;
       const circleProgress = (seconds / 60) * 100;
 
-      // פונקציות חתימה
+      // פונקציית פנייה מותאמת ל-Gemini API המעודכן
+      const fetchAiAdvice = async (customPrompt = '') => {
+        if (!apiKey) {
+          setShowApiKeyModal(true);
+          return;
+        }
+
+        setIsAiLoading(true);
+      const circleProgress = (seconds / 60) * 100;
+
+      // פונקציית AI עם טיפול שגיאות נכון
+      const fetchAiAdvice = async (customPrompt = '') => {
+        setAiAdvice('⏳ משיכת עצה מהבינה המלאכותית...');
+        try {
+          const prompt = customPrompt || `אתה מאמן אישי עוזר בבניית חוסן ונו מממכרויות. תן עצה קצרה וחזקה למישהו בדקה קשה. התשובה צריכה להיות בעברית, בעד שני משפטים מכסימום.`;
+          
+          const response = await fetch('https://api.openai.com/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer sk-placeholder` // TODO: אם תרצה להשתמש ב-AI, הוסף API key
+            },
+            body: JSON.stringify({
+              model: 'gpt-3.5-turbo',
+              messages: [{ role: 'user', content: prompt }],
+              max_tokens: 100
+            })
+          });
+
+          if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: בעיה בחיבור ל-API`);
+          }
+
+          const data = await response.json();
+          
+          if (data.error) {
+            const errorMsg = typeof data.error === 'string' 
+              ? data.error 
+              : data.error.message || JSON.stringify(data.error);
+            setAiAdvice(`⚠️ שגיאה: ${errorMsg}`);
+            return;
+          }
+
+          if (data.choices && data.choices[0]?.message?.content) {
+            setAiAdvice(data.choices[0].message.content);
+          } else {
+            setAiAdvice('😊 זכור: אתה חזק מהיום שלפני זה. המשך!');
+          }
+        } catch (error) {
+          const errorMsg = error instanceof Error ? error.message : 'שגיאה לא ידועה';
+          setAiAdvice(`❌ ${errorMsg}`);
+          console.error('AI Error:', error);
+        }
+      };
+
+        const prompt = customPrompt || `אני נמצא בתהליך חיזוק אישי ובניית הרגלים באפליקציית "איתן". 
+        ההבטחה האישית שלי לעצמי היא: "${profile.promise}".
+        הרצף הנקי שלי עומד על כ-${days} ימים.
+        תן לי חיזוק מנטלי קצר, מעצים וממוקד בעברית (עד 3 משפטים) שיעזור לי לשמור על פוקוס ושליטה.`;
+
+        try {
+          // שימוש במודל החדיש והנתמך ביותר כברירת מחדל
+          const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              contents: [{ parts: [{ text: prompt }] }]
+            })
+          });
+
+          const data = await response.json();
+          if (data.candidates && data.candidates[0].content.parts[0].text) {
+            setAiAdvice(data.candidates[0].content.parts[0].text);
+          } else if (data.error) {
+            setAiAdvice(`שגיאת API: ${data.error.message}`);
+          } else {
+            setAiAdvice("תגובה לא תקינה התקבלה מהשרת.");
+          }
+        } catch (error) {
+          setAiAdvice("שגיאת התחברות לשרת ה-AI.");
+        } finally {
+          setIsAiLoading(false);
+        }
+      };
+
       const startDrawing = (e) => {
         const canvas = canvasRef.current;
         if (!canvas) return;
@@ -186,8 +260,13 @@
       };
 
       const handleFinishOnboarding = () => {
-        saveToStorage('eitan_registered', 'true');
-        saveToStorage('eitan_profile', profile);
+        const now = Date.now();
+        localStorage.setItem('eitan_registered', 'true');
+        localStorage.setItem('eitan_profile', JSON.stringify(profile));
+        if (!localStorage.getItem('eitan_streak_start')) {
+          localStorage.setItem('eitan_streak_start', now.toString());
+          setStartTime(now);
+        }
         setIsRegistered(true);
       };
 
@@ -203,14 +282,13 @@
 
         setLogs(updatedLogs);
         setStartTime(newStartTime);
-        saveToStorage('eitan_logs', updatedLogs);
-        saveToStorage('eitan_streak_start', newStartTime.toString());
+        localStorage.setItem('eitan_logs', JSON.stringify(updatedLogs));
+        localStorage.setItem('eitan_streak_start', newStartTime.toString());
 
         setResetReason('');
         setShowResetModal(false);
       };
 
-      // --- מסכי הרשמה ---
       if (!isRegistered) {
         return (
           <div className="min-h-screen bg-zinc-950 text-zinc-100 flex items-center justify-center p-4" dir="rtl">
@@ -218,11 +296,9 @@
               
               {onboardingStep === 1 && (
                 <div className="space-y-6">
-                  <div className="text-center space-y-2">
-                    <div className="w-12 h-12 rounded-2xl bg-emerald-500 text-zinc-950 font-black text-2xl flex items-center justify-center mx-auto shadow-lg shadow-emerald-500/20">
-                      א
-                    </div>
-                    <h1 className="text-2xl font-black">ברוכים הבאים להיתן</h1>
+                  <div className="text-center space-y-3 flex flex-col items-center">
+                    <EitanLogo size="lg" />
+                    <h1 className="text-2xl font-black pt-2">ברוכים הבאים לאיתן</h1>
                     <p className="text-xs text-zinc-400">מרחב פרטי ומאובטח לבניית חוסן אישי וניהול הרגלים</p>
                   </div>
 
@@ -428,11 +504,25 @@
         );
       }
 
-      // --- Dashboard ---
       return (
         <div className="min-h-screen bg-zinc-950 text-zinc-100 font-sans p-4 md:p-8" dir="rtl">
-          <div className="max-w-4xl mx-auto space-y-8">
+          <div className="max-w-4xl mx-auto space-y-6">
             
+            <header className="bg-zinc-900/80 border border-zinc-800 px-6 py-4 rounded-2xl flex justify-between items-center shadow-lg backdrop-blur-md">
+              <EitanLogo size="sm" />
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => setShowApiKeyModal(true)}
+                  className="text-xs bg-zinc-800 hover:bg-zinc-700 text-zinc-300 px-3 py-1.5 rounded-xl transition-all border border-zinc-700"
+                >
+                  ⚙️ הגדרת מפתח AI
+                </button>
+                <span className="text-xs text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20 font-medium">
+                  שלום, {profile.name}
+                </span>
+              </div>
+            </header>
+
             <div className="bg-zinc-900/90 border border-emerald-500/30 p-6 rounded-3xl shadow-lg relative overflow-hidden flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
               <div className="absolute top-0 right-0 w-2 h-full bg-emerald-500"></div>
               <div className="space-y-1">
@@ -453,9 +543,7 @@
               
               <div className="flex justify-between w-full items-center">
                 <span className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">טיימר רצף נקי</span>
-                <span className="text-xs text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
-                  שלום, {profile.name}
-                </span>
+                <span className="text-xs text-zinc-500">מצב אופליין / פרטי</span>
               </div>
 
               <div 
@@ -491,7 +579,68 @@
 
             </div>
 
+            <div className="bg-zinc-900/90 border border-zinc-800 p-6 rounded-3xl space-y-4 shadow-xl">
+              <div className="flex justify-between items-center">
+                <div className="flex items-center gap-2">
+                  <span className="text-emerald-400 text-lg">🤖</span>
+                  <h3 className="text-sm font-bold text-white">היועץ והמאמן האישי (Gemini AI)</h3>
+                </div>
+                <button
+                  onClick={() => fetchAiAdvice()}
+                  disabled={isAiLoading}
+                  className="px-4 py-2 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 font-bold text-xs transition-all disabled:opacity-50"
+                >
+                  {isAiLoading ? 'חושב...' : 'קבל חיזוק מנטלי עכשיו'}
+                </button>
+              </div>
+
+              {aiAdvice && (
+                <div className="bg-zinc-950 p-4 rounded-2xl border border-zinc-800 text-xs text-zinc-300 leading-relaxed">
+                  "{aiAdvice}"
+                </div>
+              )}
+            </div>
+
           </div>
+
+          {showApiKeyModal && (
+            <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+              <div className="bg-zinc-900 border border-zinc-800 p-6 rounded-3xl max-w-md w-full space-y-4">
+                <h3 className="text-lg font-bold text-white">הגדרת מפתח Gemini API</h3>
+                <p className="text-xs text-zinc-400 leading-relaxed">
+                  הכנס את מפתח ה-API החינמי שלך מ-<a href="https://aistudio.google.com/" target="_blank" className="text-emerald-400 underline">Google AI Studio</a>. המפתח נשמר אך ורק בדפדפן שלך.
+                </p>
+                <input
+                  type="password"
+                  value={tempApiKeyInput}
+                  onChange={(e) => setTempApiKeyInput(e.target.value)}
+                  placeholder="הדבק כאן את מפתח ה-API..."
+                  className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-xs text-zinc-200 focus:outline-none focus:border-emerald-500"
+                />
+                <div className="flex gap-2 pt-2">
+                  <button
+                    onClick={() => {
+                      if (tempApiKeyInput.trim()) {
+                        setApiKey(tempApiKeyInput.trim());
+                        localStorage.setItem('eitan_gemini_key', tempApiKeyInput.trim());
+                        setShowApiKeyModal(false);
+                        setTempApiKeyInput('');
+                      }
+                    }}
+                    className="flex-1 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-zinc-950 font-bold text-xs transition-all"
+                  >
+                    שמור מפתח
+                  </button>
+                  <button
+                    onClick={() => setShowApiKeyModal(false)}
+                    className="px-4 py-2.5 rounded-xl bg-zinc-950 text-zinc-400 font-bold text-xs hover:text-white transition-all"
+                  >
+                    ביטול
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
 
           {showResetModal && (
             <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
